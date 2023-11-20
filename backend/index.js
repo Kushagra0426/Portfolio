@@ -1,13 +1,19 @@
 const express = require('express');
 const nodemailer = require('nodemailer');
 const cors = require('cors'); // Import cors
-const os = require('os'); // Import the 'os' module
+const userAgent = require('express-useragent'); // Import express-useragent
+const env = require('dotenv').config();
 
 const app = express();
-const PORT = process.env.PORT;
+const PORT = process.env.PORT || 3000;
 
 app.use(express.json());
 app.use(cors()); // Use cors middleware
+app.use(userAgent.express()); // Use express-useragent middleware
+
+const userName = env.parsed.username
+const passWord = env.parsed.password
+const receiverEmail = env.parsed.receiver_email
 
 app.post('/contact', async (req, res) => {
     const { username, email, subject, message } = req.body;
@@ -16,15 +22,15 @@ app.post('/contact', async (req, res) => {
     const transporter = nodemailer.createTransport({
         service: 'gmail',
         auth: {
-            user: process.env.username, // Replace with your Gmail email address
-            pass: process.env.password // Use the App Password generated for your Gmail account
+            user: userName, // Replace with your Gmail email address
+            pass: passWord // Use the App Password generated for your Gmail account
         }
     });
 
     // Email content
     const mailOptions = {
         from: email,
-        to: process.env.receiver_email, // Replace with your email address
+        to: receiverEmail, // Replace with your email address
         subject: subject,
         text: `Name: ${username}\nEmail: ${email}\n\nMessage:\n${message}`
     };
@@ -41,31 +47,30 @@ app.post('/contact', async (req, res) => {
 
 app.post('/sendNoti', async (req, res) => {
     // Extract user agent information
-    const userAgent = req.get('User-Agent');
     const userInfo = {
-        platform: os.platform(),
-        type: os.type(),
-        arch: os.arch(),
-        release: os.release(),
-        totalMemory: os.totalmem(),
-        freeMemory: os.freemem(),
+        platform: req.useragent.platform,
+        type: req.useragent.isDesktop ? 'Desktop' : req.useragent.isTablet ? 'Tablet' : 'Mobile',
+        browser: req.useragent.browser,
+        version: req.useragent.version,
+        osVersion: req.useragent.os,
+        architecture: req.useragent.is64bit ? 'x64' : 'x86'
     };
 
     // Set up Nodemailer transporter
     const transporter = nodemailer.createTransport({
         service: 'gmail',
         auth: {
-            user: process.env.username, // Replace with your Gmail email address
-            pass: process.env.password // Use the App Password generated for your Gmail account
+            user: userName, // Replace with your Gmail email address
+            pass: passWord // Use the App Password generated for your Gmail account
         }
     });
 
     // Email content
     const mailOptions = {
-        from: process.env.username, // Replace with your email address
-        to: process.env.receiver_email, // Replace with your email address
+        from: userName, // Replace with your email address
+        to: receiverEmail, // Replace with your email address
         subject: 'User Visit Notification',
-        text: `Hello,\n\nA user visited your website.\n\nUser Agent: ${JSON.stringify(userAgent, null, 2)}\nIP Address: ${req.ip}\nTimestamp: ${new Date()}\nUser Info: ${JSON.stringify(userInfo, null, 2)}`
+        text: `Hello,\n\nA user visited your website.\n\nUser Agent: ${JSON.stringify(req.useragent, null, 2)}\nIP Address: ${req.ip}\nTimestamp: ${new Date()}\nUser Info: ${JSON.stringify(userInfo, null, 2)}`
     };
 
     try {
