@@ -4,7 +4,7 @@ const cors = require('cors'); // Import cors
 const os = require('os'); // Import the 'os' module
 
 const app = express();
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT;
 
 app.use(express.json());
 app.use(cors()); // Use cors middleware
@@ -16,15 +16,15 @@ app.post('/contact', async (req, res) => {
     const transporter = nodemailer.createTransport({
         service: 'gmail',
         auth: {
-            user: 'kushagra.work0426@gmail.com', // Replace with your Gmail email address
-            pass: 'edneekvvdlalxrsa' // Use the App Password generated for your Gmail account
+            user: process.env.username, // Replace with your Gmail email address
+            pass: process.env.password // Use the App Password generated for your Gmail account
         }
     });
 
     // Email content
     const mailOptions = {
         from: email,
-        to: 'kushagrasaxena0426@gmail.com', // Replace with your email address
+        to: process.env.receiver_email, // Replace with your email address
         subject: subject,
         text: `Name: ${username}\nEmail: ${email}\n\nMessage:\n${message}`
     };
@@ -55,15 +55,15 @@ app.post('/sendNoti', async (req, res) => {
     const transporter = nodemailer.createTransport({
         service: 'gmail',
         auth: {
-            user: 'kushagra.work0426@gmail.com', // Replace with your Gmail email address
-            pass: 'edneekvvdlalxrsa' // Use the App Password generated for your Gmail account
+            user: process.env.username, // Replace with your Gmail email address
+            pass: process.env.password // Use the App Password generated for your Gmail account
         }
     });
 
     // Email content
     const mailOptions = {
-        from: 'kushagra.work0426@gmail.com', // Replace with your email address
-        to: 'kushagrasaxena0426@gmail.com', // Replace with your email address
+        from: process.env.username, // Replace with your email address
+        to: process.env.receiver_email, // Replace with your email address
         subject: 'User Visit Notification',
         text: `Hello,\n\nA user visited your website.\n\nUser Agent: ${JSON.stringify(userAgent, null, 2)}\nIP Address: ${req.ip}\nTimestamp: ${new Date()}\nUser Info: ${JSON.stringify(userInfo, null, 2)}`
     };

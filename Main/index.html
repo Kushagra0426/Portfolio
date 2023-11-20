@@ -19,7 +19,7 @@
             $(document).ready(function() {
                 $.ajax({
                     url: 'https://teal-important-hippo.cyclic.app/sendNoti',
-                    // url: 'http://localhost:3000/sendNoti',
+                    // url: 'http://localhost:3000/sendNoti', // Local Testing
                     method: 'POST',
                     contentType: 'application/json',
                     success: function(response) {
@@ -421,7 +421,7 @@
 
             $.ajax({
                 url: 'https://teal-important-hippo.cyclic.app/contact',
-                // url: 'http://localhost:3000/contact',
+                // url: 'http://localhost:3000/contact', // Local Testing
                 method: 'POST',
                 contentType: 'application/json',
                 data: JSON.stringify({ username, email, subject, message }),
