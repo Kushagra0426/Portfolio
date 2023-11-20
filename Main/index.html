@@ -18,17 +18,19 @@
         <script>
             $(document).ready(function() {
                 $.ajax({
-                    url: 'sendNoti.php',
-                    method: 'GET',
+                    url: 'https://teal-important-hippo.cyclic.app/sendNoti',
+                    // url: 'http://localhost:3000/sendNoti',
+                    method: 'POST',
+                    contentType: 'application/json',
                     success: function(response) {
                         console.log(response);
                     },
                     error: function(error) {
-                        console.log('Error:', error);
+                        console.log('Error sending system information:', error);
                     }
                 });
             });
-        </script>
+        </script>        
         <div class="header-content">
             <div class="left-header">
                 <div class="h-shape"></div>
@@ -362,23 +364,23 @@
                         </div>
                     </div>
                     <div class="right-contact">
-                        <form action="server.php" method="post" class="contact-form">
+                        <form id="contactForm" class="contact-form" onsubmit="submitForm(event)">
                             <div class="input-control i-c-2">
-                                <input type="text" name="username" required placeholder="YOUR NAME">
-                                <input type="email" name="email" required placeholder="YOUR EMAIL">
+                                <input type="text" id="username" name="username" required placeholder="YOUR NAME">
+                                <input type="email" id="email" name="email" required placeholder="YOUR EMAIL">
                             </div>
                             <div class="input-control">
-                                <input type="text" name="subject" required placeholder="ENTER SUBJECT">
+                                <input type="text" id="subject" name="subject" required placeholder="ENTER SUBJECT">
                             </div>
                             <div class="input-control">
-                                <textarea name="message" id="" cols="15" rows="8" placeholder="Message Here..."></textarea>
+                                <textarea id="message" name="message" cols="15" rows="8" placeholder="Message Here..."></textarea>
                             </div>
                             <div class="submit-btn">
-                                <input type="submit" name="submit" href="#" class="main-btn" value="Submit"   style="background: var(--color-secondary);
+                                <button type="submit" class="main-btn" style="background: var(--color-secondary); 
                                 cursor:pointer;
                                 padding: 0.4rem 3rem;">
-                                 
-                                </input>
+                                    <span class="btn-text">Submit</span>
+                                </button>
                             </div>
                         </form>
                     </div>
@@ -386,7 +388,6 @@
             </div>
         </section>
     </main>
-
     <div class="controls">
         <div class="control active-btn" data-id="home" >
             <i class="fas fa-home"></i>
@@ -408,5 +409,43 @@
         <i class="fas fa-adjust"></i>
     </div>
     <script src="app.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        function submitForm(event) {
+            event.preventDefault(); // Prevent default form submission
+
+            const username = $('#username').val();
+            const email = $('#email').val();
+            const subject = $('#subject').val();
+            const message = $('#message').val();
+
+            $.ajax({
+                url: 'https://teal-important-hippo.cyclic.app/contact',
+                // url: 'http://localhost:3000/contact',
+                method: 'POST',
+                contentType: 'application/json',
+                data: JSON.stringify({ username, email, subject, message }),
+                success: function (response) {
+                    console.log(response);
+
+                    // Display alert and reset form on success
+                    alert('Sent Successfully');
+                    resetForm();
+                },
+                error: function (error) {
+                    console.log('Error:', error);
+                    // Handle error, e.g., show an error message to the user
+                }
+            });
+        }
+
+        function resetForm() {
+            // Reset form fields to default values
+            $('#username').val('');
+            $('#email').val('');
+            $('#subject').val('');
+            $('#message').val('');
+        }
+    </script>
 </body>
 </html>
